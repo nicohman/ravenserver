@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title> ThemeHub</title>
+
+</head>
+<body>
+<ul id="themelist">
+<% themes.forEach(function(theme){
+	var item = document.createElement("li");
+	item.className = "theme";
+	var name = document.createElement("p");
+	name.innerHTML = theme.name;
+	item.appendChild(name);
+});
+</ul>
+</body>
+</html>
