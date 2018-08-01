@@ -163,7 +163,47 @@ var upTheme = function(req, res){
 		});
 	}
 }
-
+app.post("/themes/delete/:name", function(req, res){
+	if (req.query.token){
+		jwt.verify(req.query.token, config.secret, function(err, un){
+			if (err){
+				res.status(401).send();
+			} else {
+				Theme.findOne({name:req.params.name}, function(err, theme){
+				if (err) {
+					res.status(500).send();
+				} else {
+					if (theme) {
+						if (theme.author === un.id){
+							Theme.deleteOne({name:req.params.name}, function(err, del){
+								if (err){
+									res.status(500).send();
+								} else {
+									fs.unlink(__dirname+"/public/tcdn/"+theme.path, function(err){
+										if (err){
+											console.error(err);
+											res.status(500).send();
+										} else {
+											res.status(200).send();
+										}
+									});
+								}
+							});
+						} else {
+							res.status(403).send();
+						}
+					} else {
+						console.log(theme);
+						res.status(404).send();
+					}
+				}
+			});
+			}
+		});
+	} else {
+		res.status(401).send();
+	}
+});
 app.get("/themes/repo/:name", function(req, res){
 	Theme.findOne({name:req.params.name}, function(err, theme){
 		if (!err){
