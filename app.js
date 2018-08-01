@@ -164,7 +164,19 @@ var upTheme = function(req, res){
 	}
 }
 
-
+app.get("/themes/repo/:name", function(req, res){
+	Theme.findOne({name:req.params.name}, function(err, theme){
+		if (!err){
+			if (theme){
+				res.status(200).sendFile(__dirname+"/public/tcdn/"+theme.path);
+			} else {
+				res.status(404).send();
+			}
+		} else {
+			res.status(500).send();
+		}
+	});	
+});
 app.get("/index.html", getThemes);
 app.post("/themes/upload", upTheme);
 app.post("/themes/user/create", createTUser);
