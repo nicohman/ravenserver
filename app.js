@@ -17,6 +17,13 @@ var privKey = fs.readFileSync("/etc/letsencrypt/live/demenses.net/privkey.pem",
 var cert = fs.readFileSync("/etc/letsencrypt/live/demenses.net/fullchain.pem",
 	"utf8");
 var config = require("./config.json");
+var getThemes = function(req, res){
+	Theme.find({}, function(err, themes){
+		ejs.renderFile("public/themes.ejs", {themes:themes}, function(err, str){
+			res.send(str);
+		});
+	});
+}
 var request = require("request");
 mongoose.connect("mongodb://localhost/themes");
 var Theme = mongoose.model('Theme', {
@@ -28,18 +35,140 @@ var Theme = mongoose.model('Theme', {
 	updated:String,
 	description: String
 });
-var TUser = mongoose.model('User', {
+var User = mongoose.model('User', {
 	name: String,
 	id:String,
 	pass:String,
 	date:String
 });
+var loginTUser = function(req, res){
+	User.findOne({name:req.query.name}, function(err, user){
+		if(err){
+			res.status(500).send();		
+		} else {
+			if (user){
+				bcrypt.compare(req.query.pass, user.pass, function(err, resp){
+					if(err){
+						res.status(500).send();
+					} else {
+						if (resp){
+						var token = jwt.sign({name:user.name, id:user.id}, config.secret);
+						res.status(200).send({
+							token:token,
+							name:user.name
+						});
+						} else {
+							console.log("Wrong login details");
+							res.status(403).send();
+						}
+					}
+				});
+			} else {
+				console.log("No user found");
+				res.status(403).send();
+			}
+		}
+	});
+}
+var createTUser = function(req, res){
+	User.findOne({name:req.query.name}, function(err, user){
+		if(!err){
+			if(user){
+				res.status(403).send();
+			} else {
+				console.log(req.query);
+				bcrypt.hash(req.query.pass, 10, function(err, hashed){
+					if(err){
+						console.error(err);
+						res.status(500).send();
+					} else {
+						var id = hash(req.query.name+ new Date());
+						var nu =  new User({
+							name:req.query.name,
+							pass:hashed,
+							id:id,
+							date:new Date()
+						});
+						nu.save();
+						res.status(200).send();
+					}
+					});
+				}
+			
+		} else {
+			console.error(err);
+			res.status(500).send();
+		}
+	});
+}
+
 app.use(bodyParser.urlencoded({
 	extended: true,
-	uploadDir: "./public/tcdn/"
+	uploadDir: "./public/tcdn/",
+	limit:'50mb'
 }));
+var upTheme = function(req, res){
+	if(!req.query.token){
+		res.status(401).send();
+	} else {
+		jwt.verify(req.query.token, config.secret, function(err, un){
+			if(!err){
+				console.log("1");
+				Theme.findOne({name:req.query.name}, function(err, theme){
+					if(!err){
+						if(theme && theme.author !== un.id){
+							res.status(403).send();
+						} else {
+							var form = new formidable.IncomingForm();
+							form.on('fileBegin', function (name, file) {
+								console.log("writing file");
+								ext = file.name.substr(file.name.length - 4);
+								file.path = __dirname + "/public/tcdn/" + req.query.name+".tar";
+							});
+							form.on('end', function () {
+								if(theme){
+									theme.updated = new Date();
+										res.status(200).send(req.query.name+".tar");
+
+								} else {
+									theme = new Theme({
+										name:req.query.name,
+										author:un.id,
+										updated: new Date(),
+										date:new Date(),
+										description:req.query.desc,
+										screenshot:req.query.screen,
+										path:req.query.name+".tar"
+									});
+
+								res.status(201).send(req.query.name+".tar");
+								}
+								theme.save();
+							
+							});
+							form.maxFileSize = 1024 * 1024 * 1024 * 16;
+							console.log("parsing");
+							form.parse(req, function (err) {
+								console.log(err);
+							});
+
+						}
+					} else {
+						res.status(500).send();
+					}
+				});
+			} else {
+				res.status(500).send();
+			}
+		});
+	}
+}
+
+
 app.get("/index.html", getThemes);
 app.post("/themes/upload", upTheme);
+app.post("/themes/user/create", createTUser);
+app.get("/themes/user/login", loginTUser);
 console.log("Listening on 80");
 function hash(data) {
 	return shahash.createHash('sha1').update(data, 'utf-8').digest('hex');
@@ -53,102 +182,5 @@ htt.all("*", function (req, res) {
 	return res.redirect("https://" + req.headers['host'] + req.url);
 });
 htt.listen(80);
-var getThemes = function(req, res){
-	Theme.find({}, function(err, themes){
-		ejs.renderFile("public/themes.ejs", {themes:themes}, function(err, str){
-			res.send(str);
-		});
-	});
-}
-var loginTUser = function(req, res){
-	User.findOne({name:req.params.name}, function(err, user){
-		if(err){
-			res.status(500).send();		
-		} else {
-			if (user){
-				bcrypt.compare(user.pass, req.params.pass, funnction(err, res){
-					if(err){
-						res.status(500).send();
-					} else {
-						var token = jwt.sign({name:user.name, id:user.id});
-						res.send(token);
-					}
-				});
-			} else {
-				res.status(403).send();
-			}
-		}
-	});
-}
-var createTUser = function(req, res){
-	User.findOne({name:req.body.name}, function(err, user){
-		if(!err){
-			if(user){
-				res.status(403).send();
-			} else {
-				bcrypt.hash(req.body.pass, 10, function(err, hashed){
-					if(err){
-						res.status(500).send();
-					} else {
-						var id = hash(name+Date.new());
-						var nu =  new User({
-							name:req.body.name,
-							pass:hashed,
-							id:id,
-							date:Date.new()
-						});
-						nu.save();
-					});
-				}
-			}
-		} else {
-			res.status(500).send();
-		}
-	});
-}
-var upTheme = function(req, res){
-	if(!req.params.token){
-		res.status(401).send();
-	} else {
-		jwt.verify(req.params.token, config.secret, function(err, un){
-			if(!err){
-				Theme.findOne({name:req.params.name}, function(err, theme){
-					if(!err){
-						if(theme && theme.author !== un.id){
-							res.status(403).send();
-						} else {
-							var form = new formidable.IncomingForm();
-							form.on('fileBegin', function (name, file) {
-								ext = file.name.substr(file.name.length - 4);
-								file.path = __dirname + "/public/tcdn/" + req.params.name+".tar";
-							});
-							form.on('end', function () {
-								if(theme){
-									theme.updated = Date.new();
-								} else {
-									theme = new Theme({
-										name:req.params.name,
-										author:un.id,
-										updated:Date.new(),
-										date:Date.new(),
-										description:req.params.desc,
-										screenshot:req.params.screen,
-										path:req.params.name+".tar"
-									});
-								}
-								theme.save();
-								res.status(201).send(req.params.name+".tar");
-							});
-							form.parse(req, function () {});
 
-						}
-					} else {
-					}
-				});
-			} else {
-				res.status(500).send();
-			}
-		});
-	}
-}
 
