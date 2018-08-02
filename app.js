@@ -17,19 +17,14 @@ var privKey = fs.readFileSync("/etc/letsencrypt/live/demenses.net/privkey.pem",
 var cert = fs.readFileSync("/etc/letsencrypt/live/demenses.net/fullchain.pem",
 	"utf8");
 var config = require("./config.json");
-var getThemes = function(req, res){
-	Theme.find({}, function(err, themes){
-		ejs.renderFile("public/themes.ejs", {themes:themes}, function(err, str){
-			res.send(str);
-		});
-	});
-}
+
 var request = require("request");
 mongoose.connect("mongodb://localhost/themes");
 var Theme = mongoose.model('Theme', {
 	name:String,
 	date:String,
 	author:String,
+	pauthor:String,
 	path:String,
 	screen:String,
 	updated:String,
@@ -101,7 +96,20 @@ var createTUser = function(req, res){
 		}
 	});
 }
-
+var getThemes = function(req, res){
+	Theme.find({}, null, {sort:{
+		date:1
+	}}, function(err, themes){
+		console.log("rendering");
+		console.log(themes);
+		ejs.renderFile("public/themes.ejs", {themes:themes}, function(err, str){
+			if (err){
+				console.error(err);
+			} 
+			res.send(str);
+		});
+	});
+}
 app.use(bodyParser.urlencoded({
 	extended: true,
 	uploadDir: "./public/tcdn/",
@@ -134,6 +142,7 @@ var upTheme = function(req, res){
 									theme = new Theme({
 										name:req.query.name,
 										author:un.id,
+										pauthor:un.name,
 										updated: new Date(),
 										date:new Date(),
 										description:req.query.desc,
@@ -163,6 +172,57 @@ var upTheme = function(req, res){
 		});
 	}
 }
+app.post("/themes/users/delete/:user", function(req, res){
+	if (req.query.token && req.query.pass){
+		jwt.verify(req.query.token, config.secret, function(err, t){
+			if (err){
+				res.status(401).send();
+			} else {
+				if ( req.params.user == t.name){
+					User.findOne({id:t.id, name:t.name}, function(err, u){
+						if (err){
+							res.status(500).send();
+						} else {
+							if (u){
+								bcrypt.compare(req.query.pass, u.pass, function(err, c){
+									if (err){
+										res.status(500).send();
+									} else {
+										if(c){
+								if (u.name == req.params.user && u.name == t.name){
+									User.deleteOne({id:t.id, name:t.name}, function(err){
+										Theme.deleteMany({author:t.id}, function(err, o){
+											if (err){
+										res.status(500).send();
+											} else {
+										res.status(200).send();
+											}
+										});
+									});	
+								} else {
+									res.status(403).send();
+								}
+										} else {
+											res.status(403).send();
+										}
+									}
+								});
+							} else {
+								console.log(u);
+								res.status(404).send();	
+							}
+						}
+					});
+				} else {
+					res.status(403).send();
+				}
+			}
+		});
+	} else {
+		res.status(401).send();
+	}
+});
+app.use(express.static("/home/nicohman/ravenserver/public/static"));
 app.post("/themes/delete/:name", function(req, res){
 	if (req.query.token){
 		jwt.verify(req.query.token, config.secret, function(err, un){
