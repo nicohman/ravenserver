@@ -173,7 +173,7 @@ var upTheme = function(req, res){
 	}
 }
 app.post("/themes/meta/:name", function(req, res){
-	if (req.query.tokenn && req.query.typem && req.query.value) {
+	if (req.query.token && req.query.typem && req.query.value) {
 		jwt.verify(req.query.token, config.secret, function(err, t){
 			if (err) {
 				res.status(500).send()

@@ -1,0 +1,25 @@
+<div class="theme-container">
+<div class='theme'>
+<div class="theme-name">
+<%= theme.name %>
+</div>
+<br>
+<div class="theme-author">
+<%= theme.pauthor %>
+</div>
+<% if (theme.screen) { %>
+	<img class="theme-screen" src ="<%= theme.screen %>">
+<% } else {%>
+	<img class="theme-screen" src="/none.png"><% } %>
+
+<div class="theme-date">
+	Updated <%= new Date(theme.updated).toLocaleString() %>
+</div>
+<% if (theme.description) { %>
+	<div class="theme-desc">
+	<%= theme.description %>
+</div>
+
+<% } %>
+</div>
+</div>

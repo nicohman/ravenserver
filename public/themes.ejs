@@ -2,17 +2,13 @@
 <html>
 <head>
 <title> ThemeHub</title>
-
+<link rel="stylesheet" href="/stylesheet.css"></link>
 </head>
 <body>
-<ul id="themelist">
-<% themes.forEach(function(theme){
-	var item = document.createElement("li");
-	item.className = "theme";
-	var name = document.createElement("p");
-	name.innerHTML = theme.name;
-	item.appendChild(name);
-});
-</ul>
+<div id="themelist">
+	<% themes.forEach(function(theme) { %>
+	<%- include('views/theme', {theme:theme}); %>
+	<% }); %>
+</div>
 </body>
 </html>
