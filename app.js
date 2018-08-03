@@ -172,6 +172,39 @@ var upTheme = function(req, res){
 		});
 	}
 }
+app.post("/themes/meta/:name", function(req, res){
+	if (req.query.tokenn && req.query.typem && req.query.value) {
+		jwt.verify(req.query.token, config.secret, function(err, t){
+			if (err) {
+				res.status(500).send()
+			} else {
+				Theme.findOne({name:req.params.name}, function(err, th){
+					if (err){
+						res.status(500).send();
+					} else {
+						if (th){
+							if (th.author == t.id){
+								if(req.query.typem == "screen" || req.query.typem == "description"){
+									th[req.query.typem] = req.query.value;
+									th.save();
+									res.status(200).send();
+								} else {
+									res.status(412).send();
+								}
+							} else {
+								res.status(403).send();
+							}
+						} else {
+							res.status(404).send();
+						}
+					}
+				});
+			}
+		});
+	} else {
+		res.status(401).send();
+	}
+});
 app.post("/themes/users/delete/:user", function(req, res){
 	if (req.query.token && req.query.pass){
 		jwt.verify(req.query.token, config.secret, function(err, t){
