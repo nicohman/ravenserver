@@ -102,7 +102,7 @@ var getThemes = function(req, res){
 	}}, function(err, themes){
 		console.log("rendering");
 		console.log(themes);
-		ejs.renderFile("public/themes.ejs", {themes:themes}, function(err, str){
+		ejs.renderFile("public/themes.ejs", {themes:themes, ptitle:"All themes", constraints:" "}, function(err, str){
 			if (err){
 				console.error(err);
 			} 
@@ -110,6 +110,47 @@ var getThemes = function(req, res){
 		});
 	});
 }
+app.get("/themes/users/view/:id", function(req, res){
+	Theme.find({author:req.params.id}, function(err, themes){
+		if (err) {
+			console.error(err);
+		} else {
+			if(themes){
+				ejs.renderFile("public/themes.ejs", {themes:themes, ptitle:"All themes by "+themes[0].pauthor, constraints:"Themes by "+themes[0].pauthor}, function(err, str){
+					if (err){
+						console.error(err);
+					} 
+					res.send(str);
+				});
+			} else {
+				res.redirect("/404");
+			}
+		}
+	});
+});
+app.get("/themes/view/:name", function(req, res){
+	console.log(req.params.name);
+	Theme.findOne({name:req.params.name}, function(err, theme){
+		if(err){
+			console.error(err);
+			res.redirect("/404");
+		} else {
+			if(theme){
+				console.log(theme);
+		ejs.renderFile("public/theme.ejs", {theme:theme}, function(err, str){
+			if(err) {
+				console.error(err);
+			}
+			res.send(str);
+		});
+			} else {
+				res.redirect("/404");
+			}
+		
+		}
+	});	
+});
+
 app.use(bodyParser.urlencoded({
 	extended: true,
 	uploadDir: "./public/tcdn/",

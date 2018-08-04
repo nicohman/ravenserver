@@ -5,6 +5,7 @@
 <link rel="stylesheet" href="/stylesheet.css"></link>
 </head>
 <body>
+	<%- include('views/header', {constraints:constraints, ptitle:ptitle}); %>
 <div id="themelist">
 	<% themes.forEach(function(theme) { %>
 	<%- include('views/theme', {theme:theme}); %>

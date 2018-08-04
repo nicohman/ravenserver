@@ -1,25 +1,32 @@
 <div class="theme-container">
 <div class='theme'>
-<div class="theme-name">
-<%= theme.name %>
+<div class="theme-info">
+<div class="theme-name"><a class="theme-title-link" href="/themes/view/<%= theme.name %>">
+	<%= theme.name %>
+</a>
+</div>
+<div class="theme-author">
+<a class="theme-author-link" href="/themes/users/view/<%= theme.author %>">
+<%= theme.pauthor %>
+</a>
+</div>
 </div>
 <br>
-<div class="theme-author">
-<%= theme.pauthor %>
-</div>
+<a class="theme-screen-link" href="/themes/view/<%= theme.name %>">
 <% if (theme.screen) { %>
 	<img class="theme-screen" src ="<%= theme.screen %>">
 <% } else {%>
-	<img class="theme-screen" src="/none.png"><% } %>
-
-<div class="theme-date">
-	Updated <%= new Date(theme.updated).toLocaleString() %>
-</div>
+	<img class="theme-screen empty-screen" src="/empty.png">
+<% } %>
+</a>
 <% if (theme.description) { %>
 	<div class="theme-desc">
 	<%= theme.description %>
 </div>
-
 <% } %>
+
+<div class="theme-date">
+	Updated <%= new Date(theme.updated).toLocaleString() %>
+</div>
 </div>
 </div>

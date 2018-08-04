@@ -1,0 +1,29 @@
+<html>
+
+<head>
+	<title> <%= theme.name %> </title>
+	<link rel="stylesheet" href="/stylesheet.css">
+</head>
+<body>
+<%- include("views/header", {constraints:"",ptitle: theme.name}); %>
+<div id="theme-big">
+<div id="theme-big-title">
+<span class="bold"><%= theme.name %> </span>by  <%= theme.pauthor %>
+<a href="/themes/repo/<%=theme.name %>" id="download-big" > Download Theme </a>
+</div>
+<div id="theme-big-screen">
+<img id="theme-big-img" src="<%= theme.screen || "/empty.png" %>">
+</div>
+<% if (theme.description) { %>
+	<div id="theme-big-description">
+
+	<%= theme.description %>
+</div>
+<% } %>
+<div id="theme-big-updated">
+Updated last on <%= theme.updated %>
+</div>
+</div>
+
+</body>
+</html>
