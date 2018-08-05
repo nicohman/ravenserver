@@ -1,20 +1,23 @@
 :root {
-	--main-bg: #F5F5F5;
-	--text: #F5F5F5;
-	--sec-bg:  #AB987A;
-	--border: blue;
+	--main-bg: #073642;
+	--text: #93a1a1;
+	--sec-bg:  #002b36;
+	--border: #2aa198;
+	--link: #657b83;
+	--shadow: #1a7770;
 }
 .theme {
 	background-color: var(--sec-bg);
 	width:100%;
 	height:100%;
-	border: 1px solid blue;
+	border: 3px solid var(--border);
 	display:flex;
 	flex-direction:column;
 	justify-content:space-between;
 	margin-left:2.5%;
 	margin-right:2.5%;
 	padding:2%;
+	box-shadow:2px 3px var(--shadow);
 }
 .theme-container {
 	width:300px;
@@ -82,14 +85,15 @@ a {
 	padding:1%;
 	margin-left:9.75%;
 	height:90%;
+	box-shadow: 2px 3px var(--shadow);
 }
 .bold {
 	font-weight:bold;
 }
 #theme-big-title {
-	margin-bottom:2%;
 }
 #theme-big-description {
+	padding:2%;
 	border: 2px solid var(--border);
 }
 #theme-big-updated {
@@ -97,4 +101,9 @@ a {
 }
 #download-big {
 	text-align:right;
+	color: var(--link);
+	font-weight:bold;
+
+	margin-bottom:2%;
+	margin-left:2%;
 }

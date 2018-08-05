@@ -19,14 +19,15 @@
 	<img class="theme-screen empty-screen" src="/empty.png">
 <% } %>
 </a>
-<% if (theme.description) { %>
 	<div class="theme-desc">
-	<%= theme.description %>
+	<%= theme.description  || "No description "%>
 </div>
-<% } %>
 
 <div class="theme-date">
 	Updated <%= new Date(theme.updated).toLocaleString() %>
+</div>
+<div class="theme-installs">
+	Downloads: <%= theme.installs %>
 </div>
 </div>
 </div>

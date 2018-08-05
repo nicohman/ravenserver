@@ -9,21 +9,25 @@
 <div id="theme-big">
 <div id="theme-big-title">
 <span class="bold"><%= theme.name %> </span>by  <%= theme.pauthor %>
-<a href="/themes/repo/<%=theme.name %>" id="download-big" > Download Theme </a>
 </div>
+<a href="/themes/repo/<%=theme.name %>" id="download-big" > Download Theme </a>
+
 <div id="theme-big-screen">
 <img id="theme-big-img" src="<%= theme.screen || "/empty.png" %>">
 </div>
-<% if (theme.description) { %>
 	<div id="theme-big-description">
 
-	<%= theme.description %>
+	<%= theme.description || "This theme doesn't have a description yet. If you're the author, please add one with `raven manage meta "+theme.name+ " description [description]`" %>
 </div>
-<% } %>
 <div id="theme-big-updated">
 Updated last on <%= theme.updated %>
 </div>
+<div id="theme-big-installs">
+Total installs: <%= theme.installs %>
+
 </div>
+</div>
+
 
 </body>
 </html>

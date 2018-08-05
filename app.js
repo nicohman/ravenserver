@@ -28,7 +28,9 @@ var Theme = mongoose.model('Theme', {
 	path:String,
 	screen:String,
 	updated:String,
-	description: String
+	description: String,
+	installs:Number,
+	votes: Number
 });
 var User = mongoose.model('User', {
 	name: String,
@@ -116,7 +118,7 @@ app.get("/themes/users/view/:id", function(req, res){
 			console.error(err);
 		} else {
 			if(themes){
-				ejs.renderFile("public/themes.ejs", {themes:themes, ptitle:"All themes by "+themes[0].pauthor, constraints:"Themes by "+themes[0].pauthor}, function(err, str){
+				ejs.renderFile("public/themes.ejs", {themes:themes, ptitle:"All themes by "+themes[0].pauthor, constraints:""}, function(err, str){
 					if (err){
 						console.error(err);
 					} 
@@ -343,6 +345,8 @@ app.get("/themes/repo/:name", function(req, res){
 		if (!err){
 			if (theme){
 				res.status(200).sendFile(__dirname+"/public/tcdn/"+theme.path);
+				theme.installs ++;
+				theme.save();
 			} else {
 				res.status(404).send();
 			}
@@ -352,6 +356,7 @@ app.get("/themes/repo/:name", function(req, res){
 	});	
 });
 app.get("/index.html", getThemes);
+app.get("/", getThemes);
 app.post("/themes/upload", upTheme);
 app.post("/themes/user/create", createTUser);
 app.get("/themes/user/login", loginTUser);
