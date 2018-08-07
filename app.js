@@ -17,8 +17,25 @@ var privKey = fs.readFileSync("/etc/letsencrypt/live/demenses.net/privkey.pem",
 var cert = fs.readFileSync("/etc/letsencrypt/live/demenses.net/fullchain.pem",
 	"utf8");
 var config = require("./config.json");
-
+var san = require("sanitizer");
 var request = require("request");
+var nodemailer = require("nodemailer");
+var mConf = {
+	host:'smtp.gmail.com',
+	port:465,
+	secure:true,
+	pool:true,
+	auth:{
+		user:"nico.hickman@gmail.com",
+		pass:config.emailpass
+	}
+}
+var trans = nodemailer.createTransport(mConf);
+trans.verify(function(err){
+	if(err){
+		console.error(err);
+	}
+});
 mongoose.connect("mongodb://localhost/themes");
 var Theme = mongoose.model('Theme', {
 	name:String,
@@ -38,6 +55,11 @@ var User = mongoose.model('User', {
 	pass:String,
 	date:String
 });
+app.use(bodyParser.urlencoded({
+	extended: true,
+	uploadDir: "./public/tcdn/",
+	limit:'50mb'
+}));
 var loginTUser = function(req, res){
 	User.findOne({name:req.query.name}, function(err, user){
 		if(err){
@@ -68,6 +90,9 @@ var loginTUser = function(req, res){
 	});
 }
 var createTUser = function(req, res){
+	if(req.query.name && req.query.pass){
+		if(req.query.name.length < 20 && req.query.pass < 100){
+			req.query.name = san.escape(req.query.name);
 	User.findOne({name:req.query.name}, function(err, user){
 		if(!err){
 			if(user){
@@ -97,14 +122,20 @@ var createTUser = function(req, res){
 			res.status(500).send();
 		}
 	});
+		} else {
+			res.status(413).send();
+		}
+	} else {
+		res.status(401).send();
+	}
 }
 var getThemes = function(req, res){
 	Theme.find({}, null, {sort:{
-		date:1
+		installs:-1
 	}}, function(err, themes){
 		console.log("rendering");
 		console.log(themes);
-		ejs.renderFile("public/themes.ejs", {themes:themes, ptitle:"All themes", constraints:" "}, function(err, str){
+		ejs.renderFile("public/themes.ejs", {themes:themes, ptitle:"All themes", constraints:"Sorted by total installs"}, function(err, str){
 			if (err){
 				console.error(err);
 			} 
@@ -112,6 +143,55 @@ var getThemes = function(req, res){
 		});
 	});
 }
+app.get("/themes/report/:name", function(req, res){
+	ejs.renderFile("public/report.ejs", {name:req.params.name, ptitle:"Report a Theme"}, function(err, str){
+		if (err){
+			console.error(err);
+		} 
+		res.send(str);
+	});
+});
+app.post("/themes/report", function(req, res){
+	if (req.body && req.body.name && req.body.reason){
+				trans.sendMail({from:"themes@demenses.net",to:"nico.hickman@gmail.com",subject:"Report",text:"Name:"+req.body.name+"\nReason:"+req.body.reason+"\nAdditional Information:"+req.body.info}, function(err){
+					if (err){
+						console.error(err);
+						ejs.renderFile("public/reported.ejs", {done:false}, function(err, str){
+						
+								if (err){
+			console.error(err);
+		} 
+		res.send(str);
+
+						});
+					} else {
+						ejs.renderFile("public/reported.ejs", {done:true}, function(err, str){
+								if (err){
+			console.error(err);
+		} 
+		res.send(str);
+
+						
+						});
+					}
+				});
+	} else {
+		res.status(401).send();
+	}
+	console.log(req.body);
+});
+app.get("/recent", function(req, res){
+	Theme.find({}, null, {sort:{
+		updated:-1
+	}}, function(err, themes){
+		ejs.renderFile("public/themes.ejs", {themes:themes, ptitle: "All themes", constraints:"Sorted by most recent"}, function(err, str){
+			if(err){
+				console.error(err);
+			}
+			res.send(str);
+		});
+	});
+});
 app.get("/themes/users/view/:id", function(req, res){
 	Theme.find({author:req.params.id}, function(err, themes){
 		if (err) {
@@ -153,11 +233,7 @@ app.get("/themes/view/:name", function(req, res){
 	});	
 });
 
-app.use(bodyParser.urlencoded({
-	extended: true,
-	uploadDir: "./public/tcdn/",
-	limit:'50mb'
-}));
+
 var upTheme = function(req, res){
 	if(!req.query.token){
 		res.status(401).send();
@@ -165,6 +241,10 @@ var upTheme = function(req, res){
 		jwt.verify(req.query.token, config.secret, function(err, un){
 			if(!err){
 				console.log("1");
+				if(req.query.name && req.query.name.length > 200){
+					res.status(413).send();
+				} else if (req.query.name) {
+					req.query.name = san.escape(req.query.name);
 				Theme.findOne({name:req.query.name}, function(err, theme){
 					if(!err){
 						if(theme && theme.author !== un.id){
@@ -188,8 +268,8 @@ var upTheme = function(req, res){
 										pauthor:un.name,
 										updated: new Date(),
 										date:new Date(),
-										description:req.query.desc,
-										screenshot:req.query.screen,
+										description:undefined,
+										screenshot:undefined,
 										path:req.query.name+".tar"
 									});
 
@@ -209,6 +289,9 @@ var upTheme = function(req, res){
 						res.status(500).send();
 					}
 				});
+				} else {
+					res.status(401).send();
+				}
 			} else {
 				res.status(500).send();
 			}
@@ -217,6 +300,8 @@ var upTheme = function(req, res){
 }
 app.post("/themes/meta/:name", function(req, res){
 	if (req.query.token && req.query.typem && req.query.value) {
+		if (req.query.value.length < 200){
+			req.query.value = san.escape(req.query.value);
 		jwt.verify(req.query.token, config.secret, function(err, t){
 			if (err) {
 				res.status(500).send()
@@ -244,9 +329,13 @@ app.post("/themes/meta/:name", function(req, res){
 				});
 			}
 		});
-	} else {
+		} else {
+			res.status(413).send();
+		}
+		} else {
 		res.status(401).send();
 	}
+
 });
 app.post("/themes/users/delete/:user", function(req, res){
 	if (req.query.token && req.query.pass){

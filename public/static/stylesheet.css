@@ -93,11 +93,11 @@ a {
 #theme-big-title {
 }
 #theme-big-description {
-	padding:2%;
+	padding:0.5%;
 	border: 2px solid var(--border);
 }
 #theme-big-updated {
-	margin-top:3%;
+	margin-top:0.5%;
 }
 #download-big {
 	text-align:right;
@@ -106,4 +106,43 @@ a {
 
 	margin-bottom:2%;
 	margin-left:2%;
+}
+#header-sorts > div {
+	display:inline;
+	margin-left:0;
+	margin-right:0;
+	font-weight:bold;
+}
+#header-ptitle {
+	text-align:right;
+	margin-left:55% !important;
+}
+#theme-big-report {
+	font-weight:bold;
+	font-size:medium-large;
+}
+#report-div {
+	height:60%;
+	width:60%;
+	border:2px solid var(--border);
+	box-shadow:2px 3px var(--shadow);
+	top:20%;
+	left:20%;
+	position:absolute;
+	text-align:center;
+	background-color:var(--sec-bg);
+}
+#info {
+	resize:none;
+}
+#reported-div {
+	width:30%;
+	position:absolute;
+	left:35%;
+	top:35%;
+	height:30%;
+	border: 2px solid var(--border);
+	box-shadow: 2px 3px var(--shadow);
+	text-align:center;
+	background-color:var(--sec-bg);
 }
