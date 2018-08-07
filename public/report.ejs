@@ -7,7 +7,7 @@
 <body>
 <%- include('views/header', {constraints:"", ptitle:ptitle}); %>
 <div id="report-div">
-<h3> Report <%= name %> </h3>
+<h3> Report <%= name || "a theme" %> </h3>
 <form id="report-form" action="/themes/report" method="post">
 Name of theme:<br>
 <input type="text" name="name" value= "<%= name %>"><br>

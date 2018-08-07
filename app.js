@@ -151,6 +151,14 @@ app.get("/themes/report/:name", function(req, res){
 		res.send(str);
 	});
 });
+app.get("/themes/report", function(req, res){
+	ejs.renderFile("public/report.ejs", {name:"", ptitle:"Report a Theme"}, function(err, str){
+		if (err){
+			console.error(err);
+		} 
+		res.send(str);
+	});
+});
 app.post("/themes/report", function(req, res){
 	if (req.body && req.body.name && req.body.reason){
 				trans.sendMail({from:"themes@demenses.net",to:"nico.hickman@gmail.com",subject:"Report",text:"Name:"+req.body.name+"\nReason:"+req.body.reason+"\nAdditional Information:"+req.body.info}, function(err){
@@ -190,6 +198,16 @@ app.get("/recent", function(req, res){
 			}
 			res.send(str);
 		});
+	});
+});
+app.get("/about", function(req, res){
+	ejs.renderFile("public/about.ejs", function(err, str){
+					if(err){
+				console.error(err);
+			}
+			res.send(str);
+	
+
 	});
 });
 app.get("/themes/users/view/:id", function(req, res){
@@ -462,5 +480,3 @@ htt.all("*", function (req, res) {
 	return res.redirect("https://" + req.headers['host'] + req.url);
 });
 htt.listen(80);
-
-

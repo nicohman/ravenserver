@@ -20,7 +20,14 @@
 <% } %>
 </a>
 	<div class="theme-desc">
-	<%= theme.description  || "No description "%>
+	<% if (theme.description) {
+		if (theme.description.length > 35){
+			theme.description = theme.description.substring(0, 35)+"...";
+		} %>
+		<%= theme.description%>
+<% } else {%>
+	No Description
+<% } %>
 </div>
 
 <div class="theme-date">

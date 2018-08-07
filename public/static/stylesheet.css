@@ -84,7 +84,7 @@ a {
 	width:80%;
 	padding:1%;
 	margin-left:9.75%;
-	height:90%;
+	height:110%;
 	box-shadow: 2px 3px var(--shadow);
 }
 .bold {
@@ -95,6 +95,14 @@ a {
 #theme-big-description {
 	padding:0.5%;
 	border: 2px solid var(--border);
+}
+#theme-big-install {
+	padding:0.5%;
+	border: 2px solid var(--border);
+	margin-top:0.5%;
+	font-family:monospace;
+	font-size:large;
+	background-color:var(--main-bg);
 }
 #theme-big-updated {
 	margin-top:0.5%;
@@ -107,15 +115,27 @@ a {
 	margin-bottom:2%;
 	margin-left:2%;
 }
+#header-sorts {
+	width:30%;
+}
+#header-top {
+	margin-right:2%;
+}
+#header-new {
+	margin-right: 2%;
+}
 #header-sorts > div {
 	display:inline;
 	margin-left:0;
-	margin-right:0;
 	font-weight:bold;
 }
 #header-ptitle {
 	text-align:right;
-	margin-left:55% !important;
+	margin-left:35% !important;
+	width:30%;
+}
+#header-constraints {
+	width:20%;
 }
 #theme-big-report {
 	font-weight:bold;
@@ -146,3 +166,21 @@ a {
 	text-align:center;
 	background-color:var(--sec-bg);
 }
+#about-div {
+	width:30%;
+	height:30%;
+	position:absolute;
+	left:35%;
+	top:35%;
+	padding:0.5%;
+	border: 2px solid var(--border);
+	box-shadow: 2px 3px var(--shadow);
+	background-color:var(--sec-bg);
+}
+.raven-link {
+	color:var(--border);
+}
+#about-div > h3 {
+	text-align:center;
+}
+

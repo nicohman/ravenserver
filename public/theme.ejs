@@ -8,7 +8,7 @@
 <%- include("views/header", {constraints:"",ptitle: theme.name}); %>
 <div id="theme-big">
 <div id="theme-big-title">
-<span class="bold"><%= theme.name %> </span>by  <%= theme.pauthor %>
+<span class="bold"><%= theme.name %> </span>by <a href="/themes/users/view/<%= theme.author %>"> <%= theme.pauthor %></a>
 </div>
 <a href="/themes/repo/<%=theme.name %>" id="download-big" > Download Theme </a>
 
@@ -18,6 +18,9 @@
 	<div id="theme-big-description">
 
 	<%= theme.description || "This theme doesn't have a description yet. If you're the author, please add one with `raven manage meta "+theme.name+ " description [description]`" %>
+</div>
+<div id="theme-big-install">
+raven install <%= theme.name %>
 </div>
 <div id="theme-big-updated">
 Updated last on <%= theme.updated %>

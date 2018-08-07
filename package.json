@@ -9,6 +9,8 @@
 		"formidable": "^1.2.1",
 		"jsonwebtoken": "^8.3.0",
 		"mongoose": "^5.2.6",
-		"request": "^2.87.0"
+		"nodemailer": "^4.6.7",
+		"request": "^2.87.0",
+		"sanitizer": "^0.1.3"
 	}
 }

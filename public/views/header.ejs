@@ -15,11 +15,17 @@ Top Themes
 New Themes
 </a>
 </div>
+<div id="header-about">
+<a href="/about">
+About
+</a>
+</div>
 </div>
 <div id="header-ptitle">
 <%= ptitle %>
-</div>
-<div id="header-constraints">
+<% if (constraints){ %>
+ |
 <%= constraints %>
+<% }  %>
 </div>
 </div>
