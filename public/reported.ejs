@@ -1,0 +1,16 @@
+<html>
+<head>
+<title> Reported Theme </title>
+<link rel="stylesheet" href="/stylesheet.css">
+</head>
+<body>
+<%- include("views/header", {constraints:"",ptitle:""}) %>
+<div id="reported-div">
+<% if (done) { %>
+<h2> Reported theme successfully! </h2>
+<% } else { %>
+	<h2> There was a problem reporting the theme </h2>
+<% } %>
+</div>
+</body>
+</html>
