@@ -47,7 +47,9 @@ var Theme = mongoose.model('Theme', {
 	updated:String,
 	description: String,
 	installs:Number,
-	votes: Number
+	votes: Number,
+	reports:Array,
+	approved:Boolean
 });
 var User = mongoose.model('User', {
 	name: String,
@@ -162,6 +164,10 @@ app.get("/themes/report", function(req, res){
 app.post("/themes/report", function(req, res){
 	if (req.body && req.body.name && req.body.reason){
 				trans.sendMail({from:"themes@demenses.net",to:"nico.hickman@gmail.com",subject:"Report",text:"Name:"+req.body.name+"\nReason:"+req.body.reason+"\nAdditional Information:"+req.body.info}, function(err){
+					Theme.findOne({name:req.body.name}, function(err, t){
+						t.reports.push({date:new Date(), reason:req.body.reason, info:req.body.info});
+						t.save();
+					});
 					if (err){
 						console.error(err);
 						ejs.renderFile("public/reported.ejs", {done:false}, function(err, str){
@@ -451,7 +457,12 @@ app.get("/themes/repo/:name", function(req, res){
 	Theme.findOne({name:req.params.name}, function(err, theme){
 		if (!err){
 			if (theme){
-				res.status(200).sendFile(__dirname+"/public/tcdn/"+theme.path);
+				if (theme.reports.length > 0 && !theme.approved){
+					res.status(208);
+				} else {
+					res.status(200);
+				}
+				res.sendFile(__dirname+"/public/tcdn/"+theme.path);
 				theme.installs ++;
 				theme.save();
 			} else {
