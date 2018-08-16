@@ -13,7 +13,11 @@
 <a href="/themes/repo/<%=theme.name %>" id="download-big" > Download Theme </a>
 
 <div id="theme-big-screen">
-<img id="theme-big-img" src="<%= theme.screen || "/empty.png" %>">
+<% if (theme.screen) { %>
+<img id="theme-big-img" src="<%= "https://images.weserv.nl?url="+theme.screen.replace("https://","").replace("http://","")%>">
+<% } else { %>
+<img id="theme-big-img" src="/empty.png">
+<% } %>
 </div>
 	<div id="theme-big-description">
 

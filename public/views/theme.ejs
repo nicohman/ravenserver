@@ -14,7 +14,7 @@
 <br>
 <a class="theme-screen-link" href="/themes/view/<%= theme.name %>">
 <% if (theme.screen) { %>
-	<img class="theme-screen" src ="<%= theme.screen %>">
+	<img class="theme-screen" src ="<%= "https://images.weserv.nl/?url="+theme.screen.replace("https://","").replace("http://","") %>">
 <% } else {%>
 	<img class="theme-screen empty-screen" src="/empty.png">
 <% } %>
