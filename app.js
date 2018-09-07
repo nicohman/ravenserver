@@ -359,7 +359,23 @@ app.post("/themes/meta/:name", function(req, res){
 		} else {
 		res.status(401).send();
 	}
-
+});
+app.get("/themes/meta/:name", function(req, res){
+	Theme.findOne({name:req.params.name}, function(err, th){
+		if (err){
+			res.status(500).send();
+		} else {
+			if (th){
+				let r = JSON.stringify({
+					screen:th.screen,
+					description:th.description
+				});
+				res.status(200).send(r);
+			} else {
+				res.status(404).send();
+			}
+		}
+	});
 });
 app.post("/themes/users/delete/:user", function(req, res){
 	if (req.query.token && req.query.pass){
