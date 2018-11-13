@@ -168,7 +168,7 @@ a {
 }
 #about-div {
 	width:30%;
-	height:30%;
+	height:auto;
 	position:absolute;
 	left:35%;
 	top:35%;
