@@ -21,10 +21,10 @@
 </div>
 	<div id="theme-big-description">
 
-	<%= theme.description || "This theme doesn't have a description yet. If you're the author, please add one with `raven manage meta "+theme.name+ " description [description]`" %>
+	<%= theme.description || "This theme doesn't have a description yet. If you're the author, please add one by editing ~/.config/raven/themes/"+theme.name+"/theme.json." %>
 </div>
 <div id="theme-big-install">
-raven install <%= theme.name %>
+raven install <%= theme.name %> 
 </div>
 <div id="theme-big-updated">
 Updated last on <%= theme.updated %>
