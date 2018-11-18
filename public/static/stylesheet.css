@@ -141,6 +141,9 @@ a {
 	font-weight:bold;
 	font-size:medium-large;
 }
+#header-about {
+	margin-right:2%;
+}
 #report-div {
 	height:60%;
 	width:60%;

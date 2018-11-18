@@ -10,6 +10,7 @@ var path = require("path");
 var bcrypt = require("bcrypt");
 var shahash = require('crypto');
 var shahash = require('crypto');
+var md5 = require("nodejs-md5");
 var jwt = require("jsonwebtoken");
 var bodyParser = require('body-parser');
 var privKey = fs.readFileSync("/etc/letsencrypt/live/demenses.net/privkey.pem",
@@ -214,6 +215,29 @@ app.get("/about", function(req, res){
 			res.send(str);
 	
 
+	});
+});
+app.get("/downloads", function(req, res) {
+	var sums = {};
+	md5.file("public/static/raven-nightly", function(err, rsum){
+		if (err) {
+			console.err(err);
+		} else {
+			md5.file("public/static/ravend-nightly", function(err, rdsum) {
+				if (err) {
+					console.err(er);
+				 } else {
+				 	sums.raven = rsum;
+					 sums.ravend = rdsum;
+					 ejs.renderFile("public/downloads.ejs", {sums: sums}, function(err, str){
+					 	if (err){
+							console.err(err);
+						}
+						 res.send(str);
+					 });
+				 }
+			});
+		}
 	});
 });
 app.get("/themes/users/view/:id", function(req, res){

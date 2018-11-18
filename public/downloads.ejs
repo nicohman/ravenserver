@@ -1,0 +1,26 @@
+<html>
+<head>
+<title>Raven Downloads</title>
+<link rel="stylesheet" href="/stylesheet.css">
+</head>
+<body>
+<%- include("views/header", {ptitle:"Raven Downloads", constraints:""}); %>
+<div id="about-div">
+<h3> Downloads </h3>
+If you want to download raven, you have a few options:
+<ul>
+<li>
+Build it from source <a href="https://git.sr.ht/~nicohman/raven" class="raven-link">here</a>
+</li>
+<li>
+Install it from <a href="https://crates.io/crates/raventhemer" class="raven-link">crates.io</a>
+</li>
+</ul>
+<h5> Or, you can download binaries from here, built from the latest git version. </h5>
+<a href="/raven-nightly" class="raven-link"> Raven</a><br>
+<%= sums.raven %><br>
+<a href="/ravend-nightly" class="raven-link"> Ravend</a><br>
+<%= sums.ravend %>
+</div>
+</body>
+</html>
