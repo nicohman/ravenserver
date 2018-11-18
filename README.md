@@ -1,5 +1,5 @@
 # ravenserver
-A NodeJS server for uploading and downloading raven themes. For use with [raven](https://github.com/nicohman/raven).
+A NodeJS server for uploading and downloading raven themes. For use with [raven](https://git.sr.ht/~nicohman/raven). Use the raven mailing list and tracker for contributing/issues.
 
 ## Installation
 
