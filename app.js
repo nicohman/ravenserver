@@ -227,13 +227,20 @@ app.get("/downloads", function(req, res) {
 				if (err) {
 					console.err(er);
 				 } else {
+					 md5.file("public/static/eidolon-nightly", function(err, esum) {
+						 if (err) {
+							 console.err(err);
+						 } else {
 				 	sums.raven = rsum;
 					 sums.ravend = rdsum;
+							 sums.eidolon = esum;
 					 ejs.renderFile("public/downloads.ejs", {sums: sums}, function(err, str){
 					 	if (err){
 							console.err(err);
 						}
 						 res.send(str);
+					 });
+					 }
 					 });
 				 }
 			});
