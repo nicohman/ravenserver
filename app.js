@@ -18,6 +18,7 @@ var privKey = fs.readFileSync("/etc/letsencrypt/live/demenses.net/privkey.pem",
 var cert = fs.readFileSync("/etc/letsencrypt/live/demenses.net/fullchain.pem",
 	"utf8");
 var config = require("./config.json");
+var downloads = require("./downloads.json");
 var san = require("sanitizer");
 var request = require("request");
 var nodemailer = require("nodemailer");
@@ -231,22 +232,30 @@ app.get("/downloads", function(req, res) {
 						 if (err) {
 							 console.err(err);
 						 } else {
-				 	sums.raven = rsum;
-					 sums.ravend = rdsum;
-							 sums.eidolon = esum;
-					 ejs.renderFile("public/downloads.ejs", {sums: sums}, function(err, str){
-					 	if (err){
-							console.err(err);
-						}
-						 res.send(str);
-					 });
-					 }
-					 });
+							 md5.file("public/static/graven-nightly", function(err, gsum) {
+								 if (err) {
+									 console.err(err);
+								 } else {
+				 					sums.raven = rsum;
+					 				sums.ravend = rdsum;
+							 		sums.eidolon = esum;
+									sums.graven = gsum;
+					 				ejs.renderFile("public/downloads.ejs", {sums: sums}, function(err, str) {
+					 					if (err){
+											console.err(err);
+										}		
+						 				res.send(str);
+					 				});
+					 			}
+							 });
+						 }
+						 });
 				 }
+					 });
+		}	 
 			});
-		}
+
 	});
-});
 app.get("/themes/users/view/:id", function(req, res){
 	Theme.find({author:req.params.id}, function(err, themes){
 		if (err) {
@@ -458,6 +467,18 @@ app.post("/themes/users/delete/:user", function(req, res){
 		res.status(401).send();
 	}
 });
+function  downloadsCounter (req, res, next) {
+	if (req.path.includes("nightly")) {
+		if (downloads[req.path]) {
+			downloads[req.path]++;
+		} else {
+			downloads[req.path] = 1;
+		}
+		fs.writeFile("downloads.json", JSON.stringify(downloads), function(){});
+	}
+	next();
+}
+app.use(downloadsCounter);
 app.use(express.static("/home/nicohman/ravenserver/public/static"));
 app.post("/themes/delete/:name", function(req, res){
 	if (req.query.token){
