@@ -219,6 +219,10 @@ app.get("/about", function(req, res){
 	});
 });
 app.get("/downloads", function(req, res) {
+	res.redirect("https://nicohman.demenses.net/downloads");
+
+	});
+app.get("/checksums", function(req, res) {
 	var sums = {};
 	md5.file("public/static/raven-nightly", function(err, rsum){
 		if (err) {
@@ -240,7 +244,7 @@ app.get("/downloads", function(req, res) {
 					 				sums.ravend = rdsum;
 							 		sums.eidolon = esum;
 									sums.graven = gsum;
-					 				ejs.renderFile("public/downloads.ejs", {sums: sums}, function(err, str) {
+					 				ejs.renderFile("public/checksums.ejs", {sums: sums}, function(err, str) {
 					 					if (err){
 											console.err(err);
 										}		
@@ -256,6 +260,7 @@ app.get("/downloads", function(req, res) {
 			});
 
 	});
+
 app.get("/themes/users/view/:id", function(req, res){
 	Theme.find({author:req.params.id}, function(err, themes){
 		if (err) {
