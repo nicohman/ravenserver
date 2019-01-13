@@ -1,29 +1,26 @@
 <html>
-<head>
-<title> Report a theme </title>
-<link rel="stylesheet" href="/stylesheet.css">
-</head>
-
-<body>
-<%- include('views/header', {constraints:"", ptitle:ptitle}); %>
-<div id="report-div">
-<h3> Report <%= name || "a theme" %> </h3>
-<form id="report-form" action="/themes/report" method="post">
-Name of theme:<br>
-<input type="text" name="name" value= "<%= name %>"><br>
-Reason for reporting:<br>
-<select id="reason" name="reason">
-<option value="mal">Malicious script or virus </option>
-<option value="abu"> Abusive speech in theme or description</option>
-<option value="spa"> Spam</option>
-<option value="nsf"> NSFW Content </option>
-<option value="oth"> Other(please elaborate in info box)</option>
-</select><br>
-Additional information, if required:<br>
-<textarea rows="10" cols="60" maxLength="1000" id="info" name="info"></textarea><br>
-
-<input type="submit"></form>
-</div>
-
-</body>
-</html>
+	<head>
+		<title> Report a theme </title>
+		<link rel="stylesheet" href="/stylesheet.css">
+	</head>
+	<body>
+		<%- include('views/header', {constraints:"", ptitle:ptitle}); %>
+		<div id="report-div">
+			<h3> Report <%= name || "a theme" %> </h3>
+			<form id="report-form" action="/themes/report" method="post">
+				Name of theme:<br>
+				<input type="text" name="name" value= "<%= name %>"><br>
+				Reason for reporting:<br>
+				<select id="reason" name="reason">
+					<option value="mal">Malicious script or virus </option>
+					<option value="abu"> Abusive speech in theme or description</option>
+					<option value="spa"> Spam</option>
+					<option value="nsf"> NSFW Content </option>
+					<option value="oth"> Other(please elaborate in info box)</option>
+				</select><br>
+				Additional information, if required:<br>
+				<textarea rows="10" cols="60" maxLength="1000" id="info" name="info"></textarea><br>
+				<input type="submit"></form>
+			</div>
+		</body>
+	</html>
