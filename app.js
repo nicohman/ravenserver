@@ -240,16 +240,23 @@ app.get("/checksums", function(req, res) {
 								 if (err) {
 									 console.err(err);
 								 } else {
+									 md5.file("public/static/wyvern-nightly", function(err, wsum) {
+										 if (err) {
+											 console.err(err);
+									 } else {
 				 					sums.raven = rsum;
 					 				sums.ravend = rdsum;
 							 		sums.eidolon = esum;
 									sums.graven = gsum;
+										 sums.wyvern = wsum;
 					 				ejs.renderFile("public/checksums.ejs", {sums: sums}, function(err, str) {
 					 					if (err){
 											console.err(err);
 										}		
 						 				res.send(str);
 					 				});
+									 }
+									 });
 					 			}
 							 });
 						 }
