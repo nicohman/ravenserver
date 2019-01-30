@@ -647,8 +647,8 @@ var serv = https.createServer({
     key: privKey,
     cert: cert
 }, app);
-serv.listen(443);
+serv.listen(8080);
 htt.all("*", function(req, res) {
     return res.redirect("https://" + req.headers['host'] + req.url);
 });
-htt.listen(80);
+//htt.listen(80);
