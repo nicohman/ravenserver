@@ -9,7 +9,6 @@ var formidable = require("formidable");
 var path = require("path");
 var bcrypt = require("bcrypt");
 var shahash = require('crypto');
-var shahash = require('crypto');
 var md5 = require("nodejs-md5");
 var jwt = require("jsonwebtoken");
 var bodyParser = require('body-parser');
@@ -18,7 +17,9 @@ var privKey = fs.readFileSync("/etc/letsencrypt/live/demenses.net/privkey.pem",
 var cert = fs.readFileSync("/etc/letsencrypt/live/demenses.net/fullchain.pem",
     "utf8");
 var config = require("./config.json");
-var downloads = require("./downloads.json");
+if (config.include_downloads) {
+    var downloads = require("./downloads.json");
+}
 var san = require("sanitizer");
 var request = require("request");
 var nodemailer = require("nodemailer");
@@ -151,7 +152,8 @@ var getThemes = function(req, res) {
         ejs.renderFile("public/themes.ejs", {
             themes: themes,
             ptitle: "All themes",
-            constraints: "Sorted by total installs"
+            constraints: "Sorted by total installs",
+            include_downloads: config.include_downloads
         }, function(err, str) {
             if (err) {
                 console.error(err);
@@ -163,7 +165,8 @@ var getThemes = function(req, res) {
 app.get("/themes/report/:name", function(req, res) {
     ejs.renderFile("public/report.ejs", {
         name: req.params.name,
-        ptitle: "Report a Theme"
+        ptitle: "Report a Theme",
+        include_downloads: config.include_downloads
     }, function(err, str) {
         if (err) {
             console.error(err);
@@ -174,7 +177,8 @@ app.get("/themes/report/:name", function(req, res) {
 app.get("/themes/report", function(req, res) {
     ejs.renderFile("public/report.ejs", {
         name: "",
-        ptitle: "Report a Theme"
+        ptitle: "Report a Theme",
+        include_downloads: config.include_downloads
     }, function(err, str) {
         if (err) {
             console.error(err);
@@ -239,7 +243,8 @@ app.get("/recent", function(req, res) {
         ejs.renderFile("public/themes.ejs", {
             themes: themes,
             ptitle: "All themes",
-            constraints: "Sorted by most recent"
+            constraints: "Sorted by most recent",
+            include_downloads: config.include_downloads
         }, function(err, str) {
             if (err) {
                 console.error(err);
@@ -249,7 +254,9 @@ app.get("/recent", function(req, res) {
     });
 });
 app.get("/about", function(req, res) {
-    ejs.renderFile("public/about.ejs", function(err, str) {
+    ejs.renderFile("public/about.ejs", {
+        include_downloads: config.include_downloads
+    }, function(err, str) {
         if (err) {
             console.error(err);
         }
@@ -258,56 +265,56 @@ app.get("/about", function(req, res) {
 });
 app.get("/downloads", function(req, res) {
     res.redirect("https://nicohman.demenses.net/downloads");
-
 });
-app.get("/checksums", function(req, res) {
-    var sums = {};
-    md5.file("public/static/raven-nightly", function(err, rsum) {
-        if (err) {
-            console.err(err);
-        } else {
-            md5.file("public/static/ravend-nightly", function(err, rdsum) {
-                if (err) {
-                    console.err(er);
-                } else {
-                    md5.file("public/static/eidolon-nightly", function(err, esum) {
-                        if (err) {
-                            console.err(err);
-                        } else {
-                            md5.file("public/static/graven-nightly", function(err, gsum) {
-                                if (err) {
-                                    console.err(err);
-                                } else {
-                                    md5.file("public/static/wyvern-nightly", function(err, wsum) {
-                                        if (err) {
-                                            console.err(err);
-                                        } else {
-                                            sums.raven = rsum;
-                                            sums.ravend = rdsum;
-                                            sums.eidolon = esum;
-                                            sums.graven = gsum;
-                                            sums.wyvern = wsum;
-                                            ejs.renderFile("public/checksums.ejs", {
-                                                sums: sums
-                                            }, function(err, str) {
-                                                if (err) {
-                                                    console.err(err);
-                                                }
-                                                res.send(str);
-                                            });
-                                        }
-                                    });
-                                }
-                            });
-                        }
-                    });
-                }
-            });
-        }
+if (config.include_downloads) {
+    app.get("/checksums", function(req, res) {
+        var sums = {};
+        md5.file("public/static/raven-nightly", function(err, rsum) {
+            if (err) {
+                console.err(err);
+            } else {
+                md5.file("public/static/ravend-nightly", function(err, rdsum) {
+                    if (err) {
+                        console.err(er);
+                    } else {
+                        md5.file("public/static/eidolon-nightly", function(err, esum) {
+                            if (err) {
+                                console.err(err);
+                            } else {
+                                md5.file("public/static/graven-nightly", function(err, gsum) {
+                                    if (err) {
+                                        console.err(err);
+                                    } else {
+                                        md5.file("public/static/wyvern-nightly", function(err, wsum) {
+                                            if (err) {
+                                                console.err(err);
+                                            } else {
+                                                sums.raven = rsum;
+                                                sums.ravend = rdsum;
+                                                sums.eidolon = esum;
+                                                sums.graven = gsum;
+                                                sums.wyvern = wsum;
+                                                ejs.renderFile("public/checksums.ejs", {
+                                                    sums: sums
+                                                }, function(err, str) {
+                                                    if (err) {
+                                                        console.err(err);
+                                                    }
+                                                    res.send(str);
+                                                });
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+        });
+
     });
-
-});
-
+}
 app.get("/themes/users/view/:id", function(req, res) {
     Theme.find({
         author: req.params.id
@@ -319,7 +326,8 @@ app.get("/themes/users/view/:id", function(req, res) {
                 ejs.renderFile("public/themes.ejs", {
                     themes: themes,
                     ptitle: "All themes by " + themes[0].pauthor,
-                    constraints: ""
+                    constraints: "",
+                    include_downloads: config.include_downloads
                 }, function(err, str) {
                     if (err) {
                         console.error(err);
@@ -344,7 +352,8 @@ app.get("/themes/view/:name", function(req, res) {
             if (theme) {
                 console.log(theme);
                 ejs.renderFile("public/theme.ejs", {
-                    theme: theme
+                    theme: theme,
+                    include_downloads: config.include_downloads
                 }, function(err, str) {
                     if (err) {
                         console.error(err);
@@ -366,7 +375,6 @@ var upTheme = function(req, res) {
     } else {
         jwt.verify(req.query.token, config.secret, function(err, un) {
             if (!err) {
-                console.log("1");
                 if (req.query.name && req.query.name.length > 200) {
                     res.status(413).send();
                 } else if (req.query.name) {
@@ -543,19 +551,20 @@ app.post("/themes/users/delete/:user", function(req, res) {
         res.status(401).send();
     }
 });
-
-function downloadsCounter(req, res, next) {
-    if (req.path.includes("nightly")) {
-        if (downloads[req.path]) {
-            downloads[req.path]++;
-        } else {
-            downloads[req.path] = 1;
+if (config.include_downloads) {
+    function downloadsCounter(req, res, next) {
+        if (req.path.includes("nightly")) {
+            if (downloads[req.path]) {
+                downloads[req.path]++;
+            } else {
+                downloads[req.path] = 1;
+            }
+            fs.writeFile("downloads.json", JSON.stringify(downloads), function() {});
         }
-        fs.writeFile("downloads.json", JSON.stringify(downloads), function() {});
+        next();
     }
-    next();
+    app.use(downloadsCounter);
 }
-app.use(downloadsCounter);
 app.use(express.static("/home/nicohman/ravenserver/public/static"));
 app.post("/themes/delete/:name", function(req, res) {
     if (req.query.token) {
