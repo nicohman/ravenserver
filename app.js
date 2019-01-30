@@ -100,7 +100,7 @@ var loginTUser = function(req, res) {
 }
 var createTUser = function(req, res) {
     if (req.query.name && req.query.pass) {
-        if (req.query.name.length < 20 && req.query.pass < 100) {
+        if (req.query.name.length < 20 && req.query.pass.length < 100) {
             req.query.name = san.escape(req.query.name);
             User.findOne({
                 name: req.query.name
