@@ -24,12 +24,12 @@ var san = require("sanitizer");
 var request = require("request");
 var nodemailer = require("nodemailer");
 var mConf = {
-    host: 'smtp.gmail.com',
+    host: config.emailhost,
     port: 465,
     secure: true,
     pool: true,
     auth: {
-        user: "nico.hickman@gmail.com",
+        user: config.emailuser,
         pass: config.emailpass
     }
 }

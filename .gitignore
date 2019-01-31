@@ -4,7 +4,10 @@ logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
+public/static/*nightly
+config.json
+downloads.json
+public/tcdn
 # Runtime data
 pids
 *.pid
