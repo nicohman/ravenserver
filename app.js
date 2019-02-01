@@ -24,13 +24,13 @@ var san = require("sanitizer");
 var request = require("request");
 var nodemailer = require("nodemailer");
 var mConf = {
-    host: config.emailhost,
+    host: config.email.host,
     port: 465,
     secure: true,
     pool: true,
     auth: {
-        user: config.emailuser,
-        pass: config.emailpass
+        user: config.email.user,
+        pass: config.email.pass
     }
 }
 var trans = nodemailer.createTransport(mConf);
@@ -189,8 +189,8 @@ app.get("/themes/report", function(req, res) {
 app.post("/themes/report", function(req, res) {
     if (req.body && req.body.name && req.body.reason) {
         trans.sendMail({
-            from: "themes@demenses.net",
-            to: "nico.hickman@gmail.com",
+            from: config.email.from,
+            to: config.email.admin,
             subject: "Report",
             text: "Name:" + req.body.name + "\nReason:" + req.body.reason + "\nAdditional Information:" + req.body.info
         }, function(err) {
@@ -209,7 +209,6 @@ app.post("/themes/report", function(req, res) {
                 ejs.renderFile("public/reported.ejs", {
                     done: false
                 }, function(err, str) {
-
                     if (err) {
                         console.error(err);
                     }
@@ -264,7 +263,7 @@ app.get("/about", function(req, res) {
     });
 });
 app.get("/downloads", function(req, res) {
-    res.redirect("https://nicohman.demenses.net/downloads");
+    res.redirect(config.downloads_page);
 });
 if (config.include_downloads) {
     app.get("/checksums", function(req, res) {
