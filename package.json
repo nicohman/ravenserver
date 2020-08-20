@@ -2,7 +2,7 @@
 	"name": "ravenserver",
 	"version": "0.0.1",
 	"dependencies": {
-		"bcrypt": "^3.0.3",
+		"bcrypt": "^5.0.0",
 		"body-parser": "^1.18.3",
 		"ejs": "^2.6.1",
 		"express": "^4.16.3",
